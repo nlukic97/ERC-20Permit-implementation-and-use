@@ -1,13 +1,14 @@
-# Sample Hardhat Project
+# Implementation of the ERC20 Permit contract
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+This project demonstrates:
+1. how to implement an ERC20 Permit contract
+2. how to create a signature, and how to use it
 
-Try running some of the following tasks:
+Commands:
+```sh
+npm install
 
-```shell
-npx hardhat help
+npx hardhat compile
+
 npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
 ```

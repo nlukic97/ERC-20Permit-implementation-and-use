@@ -1,12 +1,9 @@
 import {
-  time,
   loadFixture,
 } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
 import hre, { ethers } from "hardhat";
-import { AddressLike } from "ethers";
-import { NetworkConfig } from "hardhat/types";
+import { AddressLike, Signer } from "ethers";
 
 const ONE_ETHER = ethers.parseEther('1')
 
@@ -26,9 +23,9 @@ async function signPermit({
   value:bigint,
   nonce: bigint,
   deadline:number,
-  tokenName:String,
-  tokenAddress:AddressLike,
-  signer:any, // TODO - check for this
+  tokenName:string,
+  tokenAddress:string,
+  signer: Signer,
   chainId: number
 }) {
   // Define the EIP-712 domain
@@ -80,7 +77,7 @@ describe("Lock", function () {
     // Contracts are deployed using the first signer/account by default
     const [owner, secondUser] = await hre.ethers.getSigners();
 
-    const peritCoin = await hre.ethers.getContractFactory('PERMITCOIN');
+    const peritCoin = await hre.ethers.getContractFactory('PermitCoin');
     const TokenContract = await peritCoin.deploy(owner.address);
 
     return { TokenContract, owner, secondUser };
@@ -121,12 +118,15 @@ describe("Lock", function () {
           signer: owner,
           chainId: chainId
       });
-
+      
+      // initial secondUser balance should be 0, and allowance to equal 0
       expect(await TokenContract.allowance(owner.address, secondUser.address)).to.equal(0)
 
+      // we should be able to increase the balance to secondUser to 1 Ether
       await TokenContract.connect(secondUser).permit(owner.address, secondUser.address, ONE_ETHER, deadline, v, r, s)
       expect(await TokenContract.allowance(owner.address, secondUser.address)).to.equal(ONE_ETHER)
       
+      // transfering funds from owner to secondUser - and checking for balance changes
       await TokenContract.connect(secondUser).transferFrom(owner.address, secondUser.address, ONE_ETHER)
       expect(await TokenContract.balanceOf(secondUser.address)).to.equal(ONE_ETHER)
       expect(await TokenContract.balanceOf(owner.address)).to.equal(0)

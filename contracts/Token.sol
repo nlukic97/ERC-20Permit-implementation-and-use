@@ -6,13 +6,14 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
-contract PERMITCOIN is ERC20, Ownable, ERC20Permit {
+contract PermitCoin is ERC20, Ownable, ERC20Permit {
     constructor(address initialOwner)
-        ERC20("PERMITCOIN", "TDC")
+        ERC20("PermitCoin", "PMC")
         Ownable(initialOwner)
-        ERC20Permit("PERMITCOIN")
+        ERC20Permit("PermitCoin")
     {
-        mint(initialOwner, 1*10**18); // giving initial deployed 1 Ether
+        // giving initial deployed 1 ether worth of PermitCoin
+        mint(initialOwner, 1 ether);
     }
 
     function mint(address to, uint256 amount) public onlyOwner {
